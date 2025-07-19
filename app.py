@@ -66,7 +66,7 @@ st.sidebar.info("")
 data = {
 
 # Seed for reproducibility
-np.random.seed(42)
+
 
 # Age range and possible degrees/industries/genders
 ages = np.arange(18, 66)
