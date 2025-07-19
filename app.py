@@ -64,8 +64,6 @@ st.sidebar.info("")
 
 # ---- Data Section (with Age and Gender for Demo) ----
 data = {
-   import numpy as np
-import pandas as pd
 
 # Seed for reproducibility
 np.random.seed(42)
