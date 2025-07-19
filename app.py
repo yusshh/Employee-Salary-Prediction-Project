@@ -1,3 +1,4 @@
+%%writefile app.py
 import streamlit as st
 import numpy as np
 import pandas as pd
@@ -63,24 +64,57 @@ st.sidebar.info("")
 
 # ---- Data Section (with Age and Gender for Demo) ----
 data = {
-    "YearsExperience": [0, 1, 2, 3, 4, 5, 7, 10, 12, 15, 18, 20, 22, 25, 30],
-    "Degree": [
-        "Bachelors", "Bachelors", "Bachelors", "Masters", "Masters", "Masters", "PhD", "PhD", "PhD",
-        "Bachelors", "Masters", "PhD", "Bachelors", "Masters", "PhD"
-    ],
-    "Industry": [
-        "Retail", "IT", "Finance", "Healthcare", "IT", "Finance", "Healthcare", "IT",
-        "Finance", "Healthcare", "IT", "Finance", "Healthcare", "IT", "Finance"
-    ],
-    "Age": [21, 22, 24, 27, 29, 31, 35, 38, 41, 45, 48, 53, 56, 60, 65],
-    "Gender": [
-        "Male", "Female", "Male", "Female", "Other", "Male", "Other", "Female", "Male",
-        "Other", "Female", "Other", "Male", "Female", "Other"
-    ],
-    "Salary": [
-        9500, 23000, 34000, 52000, 65000, 105000, 215000, 395000, 575000,
-        765000, 901000, 1050000, 1150000, 1235000, 1350000
-    ]
+   import numpy as np
+import pandas as pd
+
+# Seed for reproducibility
+np.random.seed(42)
+
+# Age range and possible degrees/industries/genders
+ages = np.arange(18, 66)
+degrees = ['Bachelors', 'Masters', 'PhD']
+industries = ['IT', 'Finance', 'Healthcare', 'Retail']
+genders = ['Male', 'Female', 'Other']
+
+data_list = []
+for age in ages:
+    # Let years of experience vary from 0 up to (age - 18) max
+    max_exp = age - 18
+    for _ in range(np.random.randint(1, 4)):  # multiple entries per age
+        years_exp = np.random.randint(0, max(1, max_exp + 1))
+        degree = np.random.choice(degrees, p=[0.55, 0.35, 0.10])
+        industry = np.random.choice(industries)
+        gender = np.random.choice(genders, p=[0.5, 0.45, 0.05])
+        
+        # Base salary by degree (all per annum, INR)
+        deg_base = {'Bachelors': 2.5e5, 'Masters': 4.0e5, 'PhD': 6.0e5}[degree]
+        
+        # Industry multiplier
+        ind_mult = {'IT': 1.3, 'Finance': 1.35, 'Healthcare': 1.12, 'Retail': 0.95}[industry]
+        
+        # Salary formula: degree base + effect of experience, age bonus, industry adjustment, randomness
+        exp_factor = 1 + (years_exp ** 1.2) / 12
+        age_bonus = 1 + (0.015 * (age - 22)) if age > 22 else 1
+        random_noise = np.random.normal(0, 50000)
+        salary = deg_base * ind_mult * exp_factor * age_bonus + random_noise
+        
+        # Ensure salary is always >=150k and not round
+        salary = max(150000, round(salary, 2))
+        
+        data_list.append({
+            'Age': age,
+            'YearsExperience': years_exp,
+            'Degree': degree,
+            'Industry': industry,
+            'Gender': gender,
+            'Salary': salary
+        })
+
+# Create DataFrame
+df = pd.DataFrame(data_list)
+
+# Preview the first 10 records
+print(df.head(10))
 }
 df = pd.DataFrame(data)
 
